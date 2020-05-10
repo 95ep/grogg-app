@@ -31,8 +31,6 @@ def create_app(test_config=None):
     from . import db, auth
     db.init_app(app)
     app.register_blueprint(auth.bp)
-    auth.test()
-    print("test",file=sys.stdout, flush=True)
-    sys.stdout.flush()
+
 
     return app

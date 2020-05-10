@@ -3,7 +3,7 @@ import functools, sys
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
-from werkzeug import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.db import get_db
 
@@ -72,7 +72,7 @@ def logout():
     return redirect(url_for('index'))
 
 
-@bp.before_app_request()
+@bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
 
