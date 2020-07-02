@@ -1,6 +1,7 @@
 # grogg-app
 ## Register
-Set up user account  
+Set up user account. Perhaps not neccessary. 
+Generate random code instead  
 Profile pic would be cool
 ## Tasting
 Two different 'views'
