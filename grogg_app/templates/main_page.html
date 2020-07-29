@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}Välkommen till GroggApp{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <ul>
+        <li><a href="{{ url_for('tasting.create') }}">Skapa provning</a> </li>
+        <li><a href="{{ url_for('tasting.join') }}">Anslut till provning </a> </li>
+    </ul>
+{% endblock %}
