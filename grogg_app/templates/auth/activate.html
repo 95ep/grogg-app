@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}Aktivera anv&aumlndare{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        <label for="username">Anv&aumlndarnamn</label>
+        <input name="username" id="username" required>
+        <label for="old_password">Tillf&aumllligt l&oumlsenord</label>
+        <input type="password" name="old_password" id="old_password" required>
+        <label for="new_password">Nytt l&oumlsenord</label>
+        <input type="password" name="new_password" id="new_password" required>
+        <input type="submit" value="Aktivera">
+    </form>
+{% endblock %}

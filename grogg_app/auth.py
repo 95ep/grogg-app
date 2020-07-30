@@ -1,14 +1,103 @@
 from flask import (
-    Blueprint, request, redirect, url_for, render_template, flash
+    Blueprint, request, redirect, url_for, render_template, flash, session, g
 )
+from werkzeug.security import generate_password_hash, check_password_hash
+from grogg_app.db import get_db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-@bp.route('/register', methods=('GET', 'POST'))
-# To register as tasting admin. Some check so that not everyone can do this
-def register():
-    pass
+#TODO - Login required
+
+@bp.before_app_request
+def load_logged_in_users():
+    """If a user id is stored in the session, load the user object from the db
+    into ''g.user''."""
+    user_id = session.get('user_id')
+
+    if user_id is None:
+        g.user = None
+    else:
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM users where id = %s;", (user_id,))
+        g.user = cur.fetchone()
+
+        cur.close()
+
+
+
+@bp.route('/activate', methods=('GET', 'POST'))
+def activate():
+    """Allows activation of admin account. Checks that account exists in db
+    and is inactivated and that temp password matches. """
+    if request.method == "POST":
+        username = request.form['username']
+        old_password = request.form['old_password']
+        new_password = request.form['new_password']
+        conn = get_db()
+        cur = conn.cursor()
+        error = None
+
+        if not username:
+            error = "Användarnamn krävs!"
+        elif not old_password:
+            error = "Gammalt lösenord krävs!"
+        elif not new_password:
+            error = "Nytt lösenord krävs!"
+
+        if error is None:
+            # Everything alright so far
+            print(type(cur), flush=True)
+            cur.execute("SELECT * FROM users WHERE username = %s;", (username,))
+            user = cur.fetchone()
+
+            print(user, flush=True)
+            if user[0] is None or user[3] or user[2] != old_password:
+                error = "Användaren hittades inte, är redan aktiverad eller så är lösenordet felaktigt."
+
+            if error is None:
+                # Ready to activate the user
+                cur.execute("UPDATE users SET password = %s, activated = TRUE WHERE id = %s;",
+                           (generate_password_hash(new_password), user[0])
+                )
+                conn.commit()
+                return redirect(url_for("auth.login"))
+
+            cur.close()
+            flash(error)
+
+    return render_template('auth/activate.html')
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
+    """Log in a registered user by adding the user id to the session."""
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        conn = get_db()
+        cur = conn.cursor()
+        error = None
+
+        cur.execute("SELECT * FROM users WHERE username = %s;", (username,))
+        user = cur.fetchone()
+
+        if id is None:
+            error = "Felaktigt användarnamn."
+        elif not check_password_hash(user[2], password):
+            error = "Felaktigt lösenord."
+
+        if error is None:
+            # Store the user id in a new session and return to main page
+            session.clear()
+            session['user_id'] = user[0]
+            return redirect(url_for('start'))
+
+        cur.close()
+        flash(error)
+
+    return render_template('auth/login.html')
+
+@bp.route('/logout')
+#TODO
+def logout():
     pass
