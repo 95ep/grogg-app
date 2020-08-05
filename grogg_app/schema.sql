@@ -9,6 +9,8 @@ activated BOOLEAN NOT NULL);
 
 CREATE TABLE tastings (
 id SERIAL PRIMARY KEY,
-created TIMESTAMP WITH TIME ZONE NOT NULL,
-tasting_name TEXT,
-created_by TEXT NOT NULL);
+tasting_name TEXT NOT NULL,
+created_by INTEGER NOT NULL,
+created_time TIMESTAMP NOT NULL,
+join_code TEXT UNIQUE NOT NULL,
+grogg_list TEXT[] NOT NULL);

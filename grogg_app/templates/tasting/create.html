@@ -1,3 +1,4 @@
+<!-- TODO: Add required where suitable -->
 {% extends 'base.html' %}
 
 {% block header %}
@@ -6,15 +7,12 @@
 
 {% block content %}
     <form method="post">
-        <label for="nickname">Smeknamn</label>
-        <input name="nickname" id="nickname" required>
-        <label for="grogg_1">Grogg #1</label>
-        <input name="grogg_1" id="grogg_1" required>
-        <label for="grogg_2">Grogg #2</label>
-        <input name="grogg_2" id="grogg_2" required>
-        <label for="grogg_3">Grogg #3</label>
-        <input name="grogg_3" id="grogg_3" required>
-
+        <label for="tasting_name">Namn p&aring provningen</label>
+        <input name="tasting_name" id="tasting_name">
+        <br>
+        <label for="grogg_list">Groggar, separera med semikolon (;)</label>
+        <textarea name="grogg_list" id="grogg_list" rows="2" cols="20"></textarea>
+        <br>
         <input type="submit" value="Godkänn">
     </form>
 {% endblock %}

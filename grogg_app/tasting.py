@@ -1,9 +1,11 @@
 from flask import (
-    Blueprint, request, redirect, url_for, render_template, flash
+    Blueprint, request, redirect, url_for, render_template, flash, g
 )
-import sys
+from datetime import datetime
+import random
 
 from grogg_app.auth import login_required
+from grogg_app.db import get_db
 
 bp = Blueprint('tasting', __name__, url_prefix='/tasting')
 
@@ -13,6 +15,7 @@ def participate():
 
 
 @bp.route('/manage', methods=('GET', 'POST'))
+#TODO: This one next
 @login_required
 def manage():
     pass
@@ -22,36 +25,59 @@ def manage():
 @login_required
 def create():
     if request.method == 'POST':
-        # Information needed:
-        # nickname
-        # List of groggs: name, spirit, soft drink
-        nickname = request.form['nickname']
-        grogg_list = []
-        grogg_list.append(request.form['grogg_1'])
-        grogg_list.append(request.form['grogg_2'])
-        grogg_list.append(request.form['grogg_3'])
+
+        tasting_name = request.form['tasting_name']
+        grogg_string = request.form['grogg_list']
+
+        # TODO - remove these lines
+        print("tasting_name: {}".format(tasting_name), flush=True)
+        print("Groggar: {}".format(grogg_string), flush=True)
+        print(str(tasting_name is None))
 
         error = None
 
-        if nickname is None:
-            error = "Smeknamn krävs!"
-        elif len(grogg_list) == 0 or None in grogg_list:
+        if len(tasting_name) == 0:
+            error = "Namn på provningen krävs!"
+        elif len(grogg_string) == 0:
+            print("Huston", flush=True)
             error = "Groggar krävs!"
 
+        print(error)
         if error is not None:
+            print("error is not none", flush=True)
             flash(error)
 
-        print("Nickname: {}".format(nickname), file=sys.stdout)
-        print("Groggar: {}".format(grogg_list), file=sys.stdout)
-        # Supposed to generated tasting code here
+        # Split the string with groggs into substring and put in list
+        grogg_list = grogg_string.split(';')
+        grogg_list = [grogg.rstrip() for grogg in grogg_list]
+        grogg_list = [grogg.lstrip() for grogg in grogg_list]
+        print("Grogg list: {}".format(grogg_list), flush=True)
 
+
+        # Created by
+        user_id = g.user['id']
+        print(user_id, flush=True)
+        # Created time
+        created = datetime.today().isoformat()
+        # Join code
+        code = str(random.randint(1, 9999))
+        while len(code) < 4: code = '0' + code
+
+        # Establish connection to db
+        conn = get_db()
+        cur = conn.cursor()
         # Add new tasting to db
+        cur.execute("INSERT INTO tastings (tasting_name, created_by, created_time, join_code, grogg_list) \
+                    VALUES (%s, %s, %s, %s, %s);", (tasting_name, user_id, created, code, grogg_list))
 
+        conn.commit()
+
+        cur.close()
         # Redirect it to the manage view
-        # return redirect(url_for('tasting.manage'))
+        return redirect(url_for('tasting.manage'))
 
-    else:
-        return render_template('tasting/create.html')
+
+    return render_template('tasting/create.html')
 
 
 @bp.route('/join', methods=('GET', 'POST'))
