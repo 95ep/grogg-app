@@ -3,21 +3,23 @@ from flask import (
 )
 import sys
 
+from grogg_app.auth import login_required
+
 bp = Blueprint('tasting', __name__, url_prefix='/tasting')
 
 @bp.route('/participate', methods=('GET', 'POST'))
-#@login_required # or maybe some check_user thingy
 def participate():
     pass
 
 
 @bp.route('/manage', methods=('GET', 'POST'))
-#@login_required
+@login_required
 def manage():
     pass
 
 
 @bp.route('/create', methods=('GET', 'POST'))
+@login_required
 def create():
     if request.method == 'POST':
         # Information needed:

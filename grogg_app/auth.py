@@ -2,6 +2,8 @@ from flask import (
     Blueprint, request, redirect, url_for, render_template, flash, session, g
 )
 from werkzeug.security import generate_password_hash, check_password_hash
+import functools
+
 from grogg_app.db import get_db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -9,6 +11,8 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 def login_required(view):
     """View decorator that redirects anonymous users to login page."""
+
+    @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
             return redirect(url_for('auth.login'))
