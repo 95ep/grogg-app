@@ -1,3 +1,4 @@
+<!-- TODO: Add required where suitable -->
 {% extends 'base.html' %}
 
 {% block header %}
@@ -7,9 +8,9 @@
 {% block content %}
   <form method="post">
     <label for="username">Anv&aumlndarnamn</label>
-    <input name="username" id="username" required>
+    <input name="username" id="username">
     <label for="password">L&oumlsenord</label>
-    <input type="password" name="password" id="password" required>
+    <input type="password" name="password" id="password">
     <input type="submit" value="Logga in">
   </form>
 {% endblock %}
