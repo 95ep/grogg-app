@@ -34,7 +34,8 @@ def load_logged_in_users():
         conn = get_db()
         cur = conn.cursor()
         cur.execute("SELECT * FROM users where id = %s;", (user_id,))
-        g.user = cur.fetchone()
+        raw_user = cur.fetchone()
+        g.user = {'id':raw_user[0], 'username':raw_user[1]}
 
         cur.close()
 
@@ -77,7 +78,7 @@ def activate():
                 return redirect(url_for("auth.login"))
 
             cur.close()
-            flash(error)
+        flash(error)
 
     return render_template('auth/activate.html')
 
@@ -94,7 +95,7 @@ def login():
         cur.execute("SELECT * FROM users WHERE username = %s;", (username,))
         user = cur.fetchone()
 
-        if id is None:
+        if user is None:
             error = "Felaktigt användarnamn."
         elif not check_password_hash(user[2], password):
             error = "Felaktigt lösenord."
