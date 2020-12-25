@@ -21,6 +21,23 @@ def login_required(view):
 
     return wrapped_view
 
+
+def join_required(view):
+    """View decorator that redirects un-joined guests to join page."""
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+
+        nickname = session.get('nickname')
+        joined_tasting = session.get('joined_tasting')
+
+        if nickname is None or kwargs['id'] != joined_tasting:
+            return redirect(url_for('tasting.join'))
+
+        return view(**kwargs)
+
+    return wrapped_view
+
+
 @bp.before_app_request
 #TODO: Functionality for automatically logging out users after certain time
 def load_logged_in_users():
@@ -61,12 +78,10 @@ def activate():
 
         if error is None:
             # Everything alright so far
-            print(type(cur), flush=True)
             cur.execute("SELECT * FROM users WHERE username = %s;", (username,))
             user = cur.fetchone()
 
-            print(user, flush=True)
-            if user[0] is None or user[3] or user[2] != old_password:
+            if user is None or user[3] or user[2] != old_password:
                 error = "Användaren hittades inte, är redan aktiverad eller så är lösenordet felaktigt."
 
             if error is None:
@@ -75,9 +90,10 @@ def activate():
                            (generate_password_hash(new_password), user[0])
                 )
                 conn.commit()
+                cur.close()
                 return redirect(url_for("auth.login"))
 
-            cur.close()
+        cur.close()
         flash(error)
 
     return render_template('auth/activate.html')

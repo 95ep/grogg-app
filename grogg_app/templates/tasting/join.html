@@ -1,0 +1,18 @@
+<!-- TODO: Add required where suitable -->
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}Anslut till provning{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        <label for="nickname">Smeknamn</label>
+        <input name="nickname" id="nickname">
+        <br>
+        <label for="join_code">Anslutningskod</label>
+        <input name="join_code" id="join_code" >
+        <br>
+        <input type="submit" value="Anslut">
+    </form>
+{% endblock %}

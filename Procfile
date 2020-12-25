@@ -1,1 +1,1 @@
-web: flask init-db; gunicorn flaskr:'create_app()'
+web: gunicorn grogg_app:'create_app()'

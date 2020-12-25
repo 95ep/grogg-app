@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}Ledningscentral för provning: {{ tasting_name }}{% endblock %}</h1>
+    <h3> Kod: {{ join_code }}</h3>
+{% endblock %}
+
+{% block content %}
+    <h2> Nuvarande grogg: {{ current_grogg }}</h2>
+
+    <article>
+        <header>
+            <h3>Betyg satt av: </h3>
+        </header>
+        {% for name in rated_by %}
+            <p>{{ name }}</p>
+        {% endfor %}
+    </article>
+    <form method="post">
+        <input type="submit" value="Nästa grogg!">
+    </form>
+    <a class="action" href="{{ url_for('tasting.manage', id=tasting_id) }}">Uppdatera</a>
+{% endblock %}

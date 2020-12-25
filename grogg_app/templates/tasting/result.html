@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}Resultat för provning: {{ tasting_name }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <article>
+        {% for grogg in grogg_list %}
+        <header>
+            <h3>{{grogg}} </h3>
+        </header>
+        Smak: {{ avg_ratings[loop.index-1][0] }}
+        Doft: {{ avg_ratings[loop.index-1][1] }}
+        Känsla: {{ avg_ratings[loop.index-1][2] }}
+        <b>Totalt:{{ avg_ratings[loop.index-1][3]}} </b>
+        {% endfor %}
+    </article>
+{% endblock %}
